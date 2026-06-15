@@ -238,6 +238,23 @@ def rank(items: list[dict], cfg: dict) -> list[dict]:
             continue  # LLM judged it below the relevance bar
         ranked.append(it)
     ranked.sort(key=lambda x: x["rank"], reverse=True)
+
+    # Curate: cap how many any single source can contribute, then cap total.
+    max_per = int(cfg.get("max_per_source", 0))
+    if max_per:
+        per: dict[str, int] = {}
+        kept = []
+        for it in ranked:
+            n = per.get(it["source"], 0)
+            if n >= max_per:
+                continue
+            per[it["source"]] = n + 1
+            kept.append(it)
+        ranked = kept
+
+    max_items = int(cfg.get("max_items", 0))
+    if max_items:
+        ranked = ranked[:max_items]
     return ranked
 
 
