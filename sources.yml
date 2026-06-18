@@ -64,16 +64,41 @@ sources:
     weight: 1.2
     tag_hint: business
 
-  # ── Twitter / X — via a RSSHub instance. Point this at YOUR curated list. ──
-  # 1. Make a private Twitter List of ~30 high-signal accounts.
-  # 2. Self-host RSSHub (docker run -d -p 1200:1200 diygod/rsshub) or use a
-  #    public instance, then set the route below. List route example:
-  #      https://<your-rsshub>/twitter/list/<list_id>
-  #    User route example:
-  #      https://<your-rsshub>/twitter/user/<username>
-  # 3. Uncomment and fill in once you have an endpoint.
-  # - name: Twitter (my list)
-  #   type: rss
-  #   url: https://your-rsshub.example.com/twitter/list/1234567890
-  #   weight: 1.1
-  #   tag_hint: tech
+# ─────────────────────────────────────────────────────────────────────────
+# Twitter / X accounts. These pull ONLY when rsshub_base is set — X has no
+# free native RSS, so a RSSHub bridge is required. Each account becomes one
+# RSS source (rsshub_base + /twitter/user/<handle>).
+#
+# To activate:
+#   1. Run RSSHub on an always-on box:  docker run -d -p 1200:1200 diygod/rsshub
+#      (X blocks unauthenticated scraping from cloud IPs — you'll likely need to
+#       supply auth tokens to RSSHub; see its Twitter route docs.)
+#   2. Expose it at a public https URL (e.g. via a tunnel or your own domain).
+#   3. Put that URL in rsshub_base below. Done — all accounts light up.
+# ─────────────────────────────────────────────────────────────────────────
+twitter:
+  rsshub_base: ""        # e.g. https://your-rsshub.example.com  (empty = off)
+  weight: 1.1
+  tag_hint: ai
+  accounts:
+    # Anthropic
+    - karpathy
+    - bcherny           # Claude Code creator
+    - trq212            # Claude Code dev
+    # OpenAI
+    - polynoamial
+    - gabriel1
+    - jxnlco
+    # Google AI
+    - OfficialLoganK
+    - ammaar
+    - fofrAI
+    # Cursor
+    - leerob
+    - ericzakariasson
+    - mntruell          # Cursor CEO
+    # xAI
+    - milichab
+    - skcd42
+    # General AI
+    - ai_explorer25

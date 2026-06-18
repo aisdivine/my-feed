@@ -102,6 +102,37 @@ def fetch_reddit(src: dict) -> list[dict]:
     return items
 
 
+def add_twitter_sources(cfg: dict) -> None:
+    """Expand the `twitter:` block into one RSS source per account.
+
+    Needs a working RSSHub base URL (X has no free native RSS). With no
+    base configured, the accounts are listed but skipped — no error.
+    """
+    tw = cfg.get("twitter") or {}
+    base = (tw.get("rsshub_base") or "").rstrip("/")
+    accounts = [a.lstrip("@") for a in (tw.get("accounts") or [])]
+    if not accounts:
+        return
+    if not base:
+        print(
+            f"  (twitter: {len(accounts)} accounts configured but "
+            "rsshub_base is empty — skipping)",
+            file=sys.stderr,
+        )
+        return
+    cfg.setdefault("sources", [])
+    for h in accounts:
+        cfg["sources"].append(
+            {
+                "name": f"@{h}",
+                "type": "rss",
+                "url": f"{base}/twitter/user/{h}",
+                "weight": float(tw.get("weight", 1.1)),
+                "tag_hint": tw.get("tag_hint", "ai"),
+            }
+        )
+
+
 def fetch_all(cfg: dict) -> list[dict]:
     items: list[dict] = []
     for src in cfg["sources"]:
@@ -279,6 +310,7 @@ def main() -> int:
     with open(os.path.join(HERE, "sources.yml")) as f:
         cfg = yaml.safe_load(f)
 
+    add_twitter_sources(cfg)
     print("Fetching sources…", file=sys.stderr)
     items = dedup(fetch_all(cfg))
     print(f"{len(items)} unique items", file=sys.stderr)
