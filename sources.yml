@@ -22,8 +22,12 @@ interests: >
   startups and tech business, science and space, and significant world news.
   Especially interested in major acquisitions, mergers, and M&A deals —
   particularly large or notable ones in tech, AI, and startups; rank those
-  highly. Not interested in crypto price talk, celebrity gossip, or
-  low-effort outrage.
+  highly. Also especially interested in "physical AI" / "physics AI" — large
+  physics models, AI-for-science, autonomous labs, world models, and robotics
+  foundation models — and the companies in that space (PhysicsX, Periodic Labs,
+  Lila Sciences, World Labs, Physical Intelligence, Figure, Prometheus, P-1 AI,
+  General Intuition); rank these highly too. Not interested in crypto price
+  talk, celebrity gossip, or low-effort outrage.
 
 sources:
   # ── Hacker News (only stories above the points threshold = instant filter) ──
@@ -64,6 +68,15 @@ sources:
     weight: 1.2
     tag_hint: business
 
+  # ── Physical AI / physics AI / AI-for-science (Google News search, last 7 days) ──
+  # Covers the category + the named players (PhysicsX, Periodic Labs, Lila
+  # Sciences, World Labs, Physical Intelligence, Figure, General Intuition, …).
+  - name: Physical AI
+    type: rss
+    url: https://news.google.com/rss/search?q=%28%22physical%20AI%22%20OR%20%22physics%20AI%22%20OR%20%22large%20physics%20model%22%20OR%20%22AI%20scientist%22%20OR%20PhysicsX%20OR%20%22Periodic%20Labs%22%20OR%20%22Lila%20Sciences%22%20OR%20%22World%20Labs%22%20OR%20%22Figure%20AI%22%20OR%20%22Physical%20Intelligence%22%20OR%20%22General%20Intuition%22%29%20when%3A7d&hl=en-US&gl=US&ceid=US:en
+    weight: 1.3
+    tag_hint: ai
+
 # ─────────────────────────────────────────────────────────────────────────
 # Twitter / X accounts. These pull ONLY when rsshub_base is set — X has no
 # free native RSS, so a RSSHub bridge is required. Each account becomes one
@@ -100,5 +113,16 @@ twitter:
     # xAI
     - milichab
     - skcd42
+    - elonmusk
+    # Lab leaders
+    - sama               # Sam Altman, OpenAI
+    - AndrewYNg
+    - ylecun             # Yann LeCun, world models
+    # Physical AI / robotics
+    - drfeifei           # Fei-Fei Li, World Labs / spatial intelligence
+    - DrJimFan           # Jim Fan, NVIDIA — physical AI & robotics
+    - adcock_brett       # Brett Adcock, Figure AI
+    - svlevine           # Sergey Levine, Physical Intelligence
     # General AI
+    - _akhaliq           # AK — daily papers
     - ai_explorer25
