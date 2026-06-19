@@ -277,14 +277,19 @@ def rank(items: list[dict], cfg: dict) -> list[dict]:
     now = time.time()
     have_scores = any("score" in it for it in items)
     min_score = int(cfg.get("min_score", 0))
+    max_age = float(cfg.get("max_age_hours", 0) or 0)
     ranked = []
     for it in items:
-        age_h = max(0.0, (now - it["ts"]) / 3600.0) if it["ts"] else 48.0
-        recency = 1.0 / (1.0 + age_h / 12.0)  # ~half-life of half a day
+        known = bool(it["ts"])
+        age_h = max(0.0, (now - it["ts"]) / 3600.0) if known else 36.0
+        recency = 1.0 / (1.0 + age_h / 8.0)  # sharper: ~half-life of 8 hours
         rel = it.get("score", 5) / 10.0
-        it["rank"] = it["weight"] * (0.6 * rel + 0.4 * recency)
+        # Recency-forward: this feed is checked daily, freshness leads.
+        it["rank"] = it["weight"] * (0.45 * rel + 0.55 * recency)
         if have_scores and it.get("score", 10) < min_score:
             continue  # LLM judged it below the relevance bar
+        if max_age and known and age_h > max_age:
+            continue  # too old for a daily-checked feed
         ranked.append(it)
     ranked.sort(key=lambda x: x["rank"], reverse=True)
 

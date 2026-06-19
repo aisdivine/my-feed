@@ -14,6 +14,7 @@ min_score: 4
 # Curation — keep the feed tight and varied instead of an endless list.
 max_items: 28        # hard cap on total stories shown
 max_per_source: 7    # no single source can flood the feed
+max_age_hours: 48    # drop anything older than this (daily-checked = fresh-first)
 
 # A short description of YOU — what you care about. The LLM scores each item's
 # relevance against this. Edit it to reshape the whole feed.
