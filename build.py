@@ -150,6 +150,23 @@ def strip_html(s: str) -> str:
     return re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", s or "")).strip()
 
 
+def human_date(ts: float) -> str:
+    """Relative for recent items, absolute date for older ones."""
+    if not ts:
+        return ""
+    now = time.time()
+    d = max(0.0, now - ts)
+    if d < 3600:
+        return f"{max(1, int(d // 60))}m ago"
+    if d < 86400:
+        return f"{int(d // 3600)}h ago"
+    if d < 7 * 86400:
+        return f"{int(d // 86400)}d ago"
+    lt = time.localtime(ts)
+    fmt = "%b %-d" if lt.tm_year == time.localtime(now).tm_year else "%b %-d, %Y"
+    return time.strftime(fmt, lt)
+
+
 def ensure_detail(items: list[dict]) -> list[dict]:
     """Guarantee every card has something to show when expanded."""
     for it in items:
@@ -209,9 +226,10 @@ def enrich_batch(client, interests: str, batch: list[dict]) -> dict[int, dict]:
         f"interests:\n{interests}\n\n"
         "For each numbered item below, return:\n"
         "- summary: one tight sentence, no preamble, max ~22 words (the card headline).\n"
-        "- detail: a genuinely useful 2-4 sentence brief (~50-80 words) for someone "
-        "who clicks in — what happened, the key facts/numbers, and why it matters. "
-        "Plain English, no fluff, no 'this article discusses'.\n"
+        "- detail: a 2-3 sentence brief (~40-70 words) for someone who clicks in — "
+        "just what happened and the key facts/numbers. Plain English, factual, "
+        "no fluff, no 'this article discusses', and do NOT editorialize about why "
+        "it matters or why it's useful — only the substance.\n"
         "- tag: a single category.\n"
         "- score: relevance 0-10 for how much THIS person would care "
         "(10 = must-read, 0 = irrelevant/spam).\n"
@@ -319,6 +337,8 @@ def main() -> int:
     items = enrich(items, cfg)
     items = ensure_detail(items)
     items = rank(items, cfg)
+    for it in items:
+        it["published"] = human_date(it["ts"])
     dropped = before - len(items)
 
     out = render(items, dropped)

@@ -110,8 +110,8 @@
     border-radius: 6px; padding: 2px 9px;
   }
   .src { color: var(--muted); }
+  .date { color: var(--muted); }
   .spacer { margin-left: auto; }
-  .score { color: var(--muted); font-variant-numeric: tabular-nums; font-size: 12px; }
   .ext {
     color: var(--wood); text-decoration: none; font-weight: 500;
     display: inline-flex; align-items: center; gap: 3px;
@@ -178,8 +178,8 @@
     <div class="row">
       <span class="tag">{{ it.tag|default('news') }}</span>
       <span class="src">{{ it.source }}</span>
+      {% if it.published %}<span class="date">· {{ it.published }}</span>{% endif %}
       <span class="spacer"></span>
-      {% if it.score is defined %}<span class="score">{{ it.score }}/10</span>{% endif %}
       <span class="chev">⌄</span>
     </div>
     <div class="detail-wrap"><div class="detail-inner">
