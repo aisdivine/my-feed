@@ -8,13 +8,13 @@
 # ─────────────────────────────────────────────────────────────────────────
 
 # Tune how aggressively the LLM filters. The build keeps items whose
-# relevance score is >= min_score (0–10). Lower = more items survive.
-min_score: 4
+# relevance score is >= min_score (0–10). Higher = stricter / higher quality.
+min_score: 6
 
-# Curation — keep the feed tight and varied instead of an endless list.
+# Curation — a tight, high-quality digest of roughly the last week.
 max_items: 28        # hard cap on total stories shown
 max_per_source: 7    # no single source can flood the feed
-max_age_hours: 48    # drop anything older than this (daily-checked = fresh-first)
+max_age_hours: 168   # ~1 week window; quality leads, recency tilts
 
 # A short description of YOU — what you care about. The LLM scores each item's
 # relevance against this. Edit it to reshape the whole feed.
@@ -45,27 +45,27 @@ sources:
     weight: 1.0
     tag_hint: world
 
-  # ── Reddit (native RSS, top of the day) ──
+  # ── Reddit (native RSS, top of the week) ──
   # NOTE: Reddit's JSON API (type: reddit) 403s from cloud/datacenter IPs like
   # GitHub Actions. The .rss endpoints below are far more reliable there. If
   # even these get rate-limited (429) in Actions, route them through RSSHub:
   #   https://<your-rsshub>/reddit/r/technology/top/day
   - name: r/technology
     type: rss
-    url: https://www.reddit.com/r/technology/top/.rss?t=day
+    url: https://www.reddit.com/r/technology/top/.rss?t=week
     weight: 0.9
     tag_hint: tech
 
   - name: r/worldnews
     type: rss
-    url: https://www.reddit.com/r/worldnews/top/.rss?t=day
+    url: https://www.reddit.com/r/worldnews/top/.rss?t=week
     weight: 0.9
     tag_hint: world
 
-  # ── Acquisitions / M&A (Google News search, last 2 days) ──
+  # ── Acquisitions / M&A (Google News search, last 7 days) ──
   - name: Acquisitions
     type: rss
-    url: https://news.google.com/rss/search?q=%28acquires%20OR%20acquisition%20OR%20merger%29%20%28tech%20OR%20AI%20OR%20startup%29%20when%3A2d&hl=en-US&gl=US&ceid=US:en
+    url: https://news.google.com/rss/search?q=%28acquires%20OR%20acquisition%20OR%20merger%29%20%28tech%20OR%20AI%20OR%20startup%29%20when%3A7d&hl=en-US&gl=US&ceid=US:en
     weight: 1.2
     tag_hint: business
 

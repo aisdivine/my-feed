@@ -282,10 +282,10 @@ def rank(items: list[dict], cfg: dict) -> list[dict]:
     for it in items:
         known = bool(it["ts"])
         age_h = max(0.0, (now - it["ts"]) / 3600.0) if known else 36.0
-        recency = 1.0 / (1.0 + age_h / 8.0)  # sharper: ~half-life of 8 hours
+        recency = 1.0 / (1.0 + age_h / 24.0)  # gentle: ~24h half-life
         rel = it.get("score", 5) / 10.0
-        # Recency-forward: this feed is checked daily, freshness leads.
-        it["rank"] = it["weight"] * (0.45 * rel + 0.55 * recency)
+        # Quality-forward over a ~week window: relevance leads, recency tilts.
+        it["rank"] = it["weight"] * (0.65 * rel + 0.35 * recency)
         if have_scores and it.get("score", 10) < min_score:
             continue  # LLM judged it below the relevance bar
         if max_age and known and age_h > max_age:
